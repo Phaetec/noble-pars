@@ -1,10 +1,5 @@
 (ns noble.translator)
 
-(defn create-graphql
-  "Takes clojure data and outputs a valid graphql query-string"
-  [data]
-  data)
-
 (defn keys-to-string
   "Takes a collection and converts all keywords to strings."
   [coll]
@@ -23,3 +18,11 @@
                                       (collection-to-string %)
                                       (str %)))
                            coll)) "}"))
+
+(defn create-graphql
+  "Takes clojure data and outputs a valid graphql query-string"
+  [data]
+  (->> data
+      keys-to-string
+      collection-to-string
+      (str "query ")))
