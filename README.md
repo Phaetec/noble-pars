@@ -1,5 +1,7 @@
 # noble
 
+[![CircleCI](https://circleci.com/gh/Phaetec/noble-pars.svg?style=svg)](https://circleci.com/gh/Phaetec/noble-pars)
+
 A Clojure library designed to ... well, that part is up to you.
 
 ## Usage
