@@ -7,5 +7,6 @@
   :plugins [[lein-ancient "0.6.10"]
             [lein-kibit "0.1.5"]
             [jonase/eastwood "0.2.4"]]
-  :profiles {:dev {:dependencies [[org.clojure/data.json "0.2.6"]
+  :profiles {:dev {:dependencies [[org.clojure/test.check "0.9.0"]
+                                  [org.clojure/data.json "0.2.6"]
                                   [clj-http "3.6.1"]]}})
