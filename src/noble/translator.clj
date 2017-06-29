@@ -1,28 +1,29 @@
 (ns noble.translator)
 
-(defn keys-to-string
+(defn keywords->string
   "Takes a collection and converts all keywords to strings."
   [coll]
   (map
    #(if (coll? %)
-      (keys-to-string %)
+      (keywords->string %)
       (if (keyword? %)
        (name %)
        %))
    coll))
 
-(defn collection-to-string
+(defn collection->string
   "Takes a prepared collection of statements and converts them into graphql syntax."
   [coll]
-  (str "{" (apply str (map #(str " "(if (coll? %)
-                                      (collection-to-string %)
-                                      (str %)))
+  (str "{" (apply str (map #(str " " (if (coll? %)
+                                       (collection->string %)
+                                       (str %)))
                            coll)) "}"))
 
 (defn edn->graphql
   "Takes clojure data and outputs a valid graphql query-string."
   [data]
   (->> data
-       keys-to-string
-       collection-to-string
+       keywords->string
+       collection->string
        (str "query ")))
+;; (edn->graphql {:foo [:bar]})
