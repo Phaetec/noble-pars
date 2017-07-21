@@ -1,34 +1,36 @@
-(ns noble.translator)
+(ns noble.translator
+  (:require [clojure.walk :as walk]
+            [clojure.string :as string]))
 
-(defn keywords->string
-  "Takes a collection and converts all keywords to strings."
-  [coll]
-  (map
-   #(if (coll? %)
-      (keywords->string %)
-      (if (keyword? %)
-       (name %)
-       %))
-   coll))
+(defn arguments->string
+  [argument-map]
+  (let [stringified (walk/stringify-keys argument-map)
+        mapped (map (fn [[k v]] (format "%s: %s" (str k) (str v))) stringified)]
+    (format "(%s)" (string/join ", " mapped))))
 
-(defn collection->string
-  "Takes a prepared collection of statements and converts them into graphql syntax."
-  [coll]
-  (str "{" (apply str (map #(str " " (if (coll? %)
-                                       (collection->string %)
-                                       (str %)))
-                           coll)) "}"))
+(arguments->string {:id 3 :unit "meter"})
+
+(defn vector->string
+  [vector-data]
+  (format "{%s}" (string/join (map #(element->string %) vector-data))))
+
+(defn element->string
+  [element]
+  (if (keyword? element)
+    (str " " (name element))
+    (if (map? element)
+      (arguments->string element)
+      (if (vector? element)
+        (vector->string element)
+        element))))
 
 (defn edn->graphql
   "Takes clojure data and outputs a valid graphql query-string."
   [data]
-  (->> data
-       keywords->string
-       collection->string
-       (str "query ")))
-;; (edn->graphql {:foo [:bar]})
+  (format "{%s}" (string/join (map element->string data))))
 
+;; (edn->graphql [:foo :bar{:id 3} [:baz :chewbacca [:hairy :han [:bleh]]]])
 ;; [:foo :bar [:baz [:chewbacca]]] => "{foo bar {baz {chewbacca}}}"
 
 ;; [:foo {:id 3 :unit "meter"} [:bar [:chewbacca {:type "hairy"}]]]
-;; => {foo(id: 3, unit: "meter") {bar {chewbacca(type: "hairy")}}}
+;; => "{foo(id: 3, unit: "meter") {bar {chewbacca(type: "hairy")}}}"
