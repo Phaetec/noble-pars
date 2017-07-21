@@ -27,3 +27,8 @@
        collection->string
        (str "query ")))
 ;; (edn->graphql {:foo [:bar]})
+
+;; [:foo :bar [:baz [:chewbacca]]] => "{foo bar {baz {chewbacca}}}"
+
+;; [:foo {:id 3 :unit "meter"} [:bar [:chewbacca {:type "hairy"}]]]
+;; => {foo(id: 3, unit: "meter") {bar {chewbacca(type: "hairy")}}}
